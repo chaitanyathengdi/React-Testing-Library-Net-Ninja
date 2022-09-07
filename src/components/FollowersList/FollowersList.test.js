@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, wait, waitFor } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 
 import { withBrowserRouter } from "../helpers/helpers";
@@ -9,7 +9,7 @@ import axios from "axios";
 
 jest.mock("axios");
 
-describe("FollowersList", () => {
+describe("FollowersList", () => { 
   beforeEach(() => {
     axios.mockImplementation(() => ({
       get: jest.fn()
@@ -34,17 +34,18 @@ describe("FollowersList", () => {
       }
     })
   })
-  it("initially renders empty container with no items", () => {
+  it("initially renders empty container with no items", async () => {
     render(withBrowserRouter(<FollowersList />));
     const list = screen.getByTestId("followerslist-container");
     const items = list.querySelectorAll('.follower-item');
     expect(list).toBeInTheDocument();
     expect(items.length).toBe(0);
+    await waitFor(() => {}); // waitFor nothing, really
   })
 
   it("fetches list from API", async () => {
     render(withBrowserRouter(<FollowersList />));
-    expect(axios.get).toHaveBeenCalled();
+    await waitFor(() => expect(axios.get).toHaveBeenCalled());
   })
 
   it("renders items based on returned data", async () => {
